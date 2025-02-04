@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ld2410_securitycam"  # You might want to change this to your actual project name
+version = "0.1.0"
+description = "A security camera with motion detection and video recording for a Raspberry Pi."
+authors = [{ name = "Russell Land", email = "main@russellland.dev" }]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyserial==3.5",
+    "python-dotenv==1.0.1",
+    "RPi.GPIO==0.7.1a4",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3

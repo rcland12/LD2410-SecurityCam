@@ -1,0 +1,33 @@
+name: LD2410-SecurityCam
+
+networks:
+  security-cam:
+    driver: bridge
+
+services:
+  app:
+    image: rcland12/ld2410-securitycam:latest
+    container_name: app
+    privileged: true
+    restart: unless-stopped
+    build:
+      context: ./
+    networks:
+      - security-cam
+    devices:
+      - /dev/ttyS0:/dev/ttyS0
+      - /dev/vchiq:/dev/vchiq
+      - /dev/gpiomem:/dev/gpiomem
+      - /dev/video0:/dev/video0
+    volumes:
+      - ./recordings:/app/recordings
+      - /opt/vc:/opt/vc
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /run/udev:/run/udev:ro
+    env_file: .env
+    group_add:
+      - video
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
