@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Optional, Tuple, Type
 
 import serial
 
-from ld2410_securitycam.logger import logger
+from logger import logger
 
 
 @dataclass
@@ -130,7 +130,6 @@ class LD2410UART:
             logger.info("Already monitoring!")
             return
 
-        time.sleep(15)
         logger.info("Starting sensor monitoring after delay...")
         self._stop_event.clear()
         self._monitor_thread = Thread(
@@ -162,3 +161,28 @@ class LD2410UART:
         exc_tb: Optional[Any],
     ) -> None:
         self.cleanup()
+
+
+if __name__ == "__main__":
+
+    def motion_callback(data: SensorData):
+        print(f"Motion: {data.moving_target}", end=" ", flush=True)
+        print(f"Stationary: {data.stationary_target}", end=" ", flush=True)
+        print(f"Distance: {data.distance}", end=" ", flush=True)
+        print(f"Signal Strength: {data.signal_strength}", end=" ", flush=True)
+        print(f"Raw Data: {data.raw_data}", end=" ", flush=True)
+        print(f"Timestamp: {data.timestamp}")
+
+    try:
+        # Create sensor with debug output and threshold of 140
+        sensor = LD2410UART(debug=True, motion_threshold=140)
+
+        # Start monitoring with callback
+        sensor.start_monitoring(motion_callback)
+
+        # Keep the main thread running
+        while True:
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        sensor.cleanup()
